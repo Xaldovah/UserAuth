@@ -73,12 +73,12 @@ class LoginView(APIView):
 class UserDetailView(RetrieveAPIView):
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    lookup_field = 'id'
+    lookup_field = 'user_id'
     queryset = User.objects.all()
 
     def get(self, request, *args, **kwargs):
         try:
-            user_id = kwargs.get('id')
+            user_id = kwargs.get('user_id')
             user = User.objects.get(pk=user_id)
 
             if user == request.user or request.user.organisations.filter(users=user).exists():
