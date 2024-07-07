@@ -1,7 +1,8 @@
+from datetime import datetime, timedelta
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.auth import get_user_model, authenticate, login
+from django.contrib.auth import get_user_model, authenticate
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import ListCreateAPIView, RetrieveAPIView
 from rest_framework.exceptions import ValidationError
@@ -11,6 +12,15 @@ import jwt
 from django.conf import settings
 
 User = get_user_model()
+
+def generate_token(user):
+    exp_time = datetime.utcnow() + timedelta(hours=1)
+    token = jwt.encode({
+        'user_id': str(user.user_id),
+        'id': str(user.user_id),
+        'exp': exp_time
+    }, settings.SECRET_KEY, algorithm='HS256')
+    return token
 
 
 class RegisterView(APIView):
@@ -33,8 +43,7 @@ class RegisterView(APIView):
         org.users.add(user)
         org.save()
 
-        token = jwt.encode({'user_id': str(user.user_id)}, settings.SECRET_KEY, algorithm='HS256')
-
+        token = generate_token(user)
         return Response({
             'status': 'success',
             'message': 'Registration successful',
@@ -52,7 +61,7 @@ class LoginView(APIView):
         password = data.get('password')
         user = authenticate(request, email=email, password=password)
         if user is not None:
-            token = jwt.encode({'user_id': str(user.user_id)}, settings.SECRET_KEY, algorithm='HS256')
+            token = generate_token(user)
             serializer = UserSerializer(user)
             return Response({
                 'status': 'success',
@@ -149,7 +158,6 @@ class OrganisationDetailView(RetrieveAPIView):
             auth_header = request.headers.get('Authorization')
             if not auth_header:
                 return Response({'detail': 'Authorization header missing'}, status=status.HTTP_401_UNAUTHORIZED)
-
             token = auth_header.split(' ')[1]
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
             user = User.objects.get(pk=payload['user_id'])
