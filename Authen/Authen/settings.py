@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+from django.conf import settings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,13 +21,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
+JWT_SIGNING_KEY = 'tH2?vo%8%:V1oTscou`R#t{t>BNrz.mW2NpA"-?k5&%vEq_28Vw0D(G|Q<`j4{q'
+JWT_ENCRYPTION_KEY = '?0*`j}aZsjlqMGRP<jp/$E{KS7w,k+mnH.|XM*y]x[<>BZ{3WTTZfi_DNqT*TI'
 SECRET_KEY = 'django-insecure-crvay-$9#4+^4kau&25tuvv6o$x3sa+hcv+ylkeocyil#x3dco'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+AUTH_USER_MODEL = 'backend.User'
 
 # Application definition
 
@@ -85,8 +88,8 @@ WSGI_APPLICATION = 'Authen.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
+        'NAME': 'my_db',
+        'USER': 'xaldovah',
         'PASSWORD': 'Postgres236',
         'HOST': 'localhost',
         'PORT': '5432',
@@ -94,11 +97,8 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-AUTH_USER_MODEL = 'backend.User'
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

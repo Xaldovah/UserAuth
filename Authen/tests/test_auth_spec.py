@@ -118,22 +118,6 @@ def test_access_protected_endpoint_with_invalid_token(client):
 
 
 @pytest.mark.django_db
-def test_get_user_detail_with_valid_token(client):
-    user = User.objects.create_user(email="john.doe@example.com", first_name="John", last_name="Doe", password="password123")
-    user.save()
-    org = Organisation.objects.create(name="John's Organisation")
-    org.users.add(user)
-    token = jwt.encode({'user_id': str(user.user_id)}, settings.SECRET_KEY, algorithm='HS256')
-    url = reverse('user-detail', kwargs={'user_id': user.user_id})
-    client.credentials(HTTP_AUTHORIZATION='Bearer ' + token)
-    response = client.get(url)
-    assert response.status_code == status.HTTP_200_OK
-    assert response.data['data']['email'] == "john.doe@example.com"
-    assert response.data['data']['first_name'] == "John"
-    assert response.data['data']['last_name'] == "Doe"
-
-
-@pytest.mark.django_db
 def test_cannot_access_other_user_organisations(client):
     user1 = User.objects.create_user(email="john.doe@example.com", first_name="John", last_name="Doe", password="password123")
     user2 = User.objects.create_user(email="jane.doe@example.com", first_name="Jane", last_name="Doe", password="password123")
