@@ -26,9 +26,9 @@ JWT_ENCRYPTION_KEY = '?0*`j}aZsjlqMGRP<jp/$E{KS7w,k+mnH.|XM*y]x[<>BZ{3WTTZfi_DNq
 SECRET_KEY = 'django-insecure-crvay-$9#4+^4kau&25tuvv6o$x3sa+hcv+ylkeocyil#x3dco'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 AUTH_USER_MODEL = 'backend.User'
 
 # Application definition
