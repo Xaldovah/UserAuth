@@ -17,11 +17,9 @@ def generate_token(user):
     exp_time = datetime.utcnow() + timedelta(hours=1)
     token = jwt.encode({
         'user_id': str(user.user_id),
-        'id': str(user.user_id),
         'exp': exp_time
     }, settings.SECRET_KEY, algorithm='HS256')
     return token
-
 
 class RegisterView(APIView):
     def post(self, request):
@@ -53,7 +51,6 @@ class RegisterView(APIView):
             }
         }, status=status.HTTP_201_CREATED)
 
-
 class LoginView(APIView):
     def post(self, request):
         data = request.data
@@ -77,7 +74,6 @@ class LoginView(APIView):
                 'message': 'Authentication failed',
                 'statusCode': 401
             }, status=status.HTTP_401_UNAUTHORIZED)
-
 
 class UserDetailView(RetrieveAPIView):
     serializer_class = UserSerializer
@@ -113,7 +109,6 @@ class UserDetailView(RetrieveAPIView):
                 'message': str(e)
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 class OrganisationListView(ListCreateAPIView):
     serializer_class = OrganisationSerializer
     permission_classes = [IsAuthenticated]
@@ -144,7 +139,6 @@ class OrganisationListView(ListCreateAPIView):
             return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'detail': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class OrganisationDetailView(RetrieveAPIView):
     serializer_class = OrganisationSerializer
