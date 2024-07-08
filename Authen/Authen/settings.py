@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-crvay-$9#4+^4kau&25tuvv6o$x3sa+hcv+ylkeocyil#x3dco
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['arkwebs.tech', 'localhost', '127.0.0.1', '35.233.230.2']
 AUTH_USER_MODEL = 'backend.User'
 
 # Application definition
@@ -133,6 +133,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
