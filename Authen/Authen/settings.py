@@ -28,7 +28,7 @@ JWT_ENCRYPTION_KEY = '?0*`j}aZsjlqMGRP<jp/$E{KS7w,k+mnH.|XM*y]x[<>BZ{3WTTZfi_DNq
 SECRET_KEY = 'django-insecure-crvay-$9#4+^4kau&25tuvv6o$x3sa+hcv+ylkeocyil#x3dco'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['arkwebs.tech', 'localhost', '127.0.0.1', '35.233.230.2']
 AUTH_USER_MODEL = 'backend.User'
