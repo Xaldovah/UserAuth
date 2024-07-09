@@ -18,12 +18,19 @@ def register(request):
             "message": "Registration successful",
             "data": {
                 "accessToken": str(token.access_token),
-                "user": serializer.data
+                "user": {
+                    "userId": str(user.userId),
+                    "firstName": user.firstName,
+                    "lastName": user.lastName,
+                    "email": user.email,
+                    "phone": user.phone
+                }
             }
         }, status=status.HTTP_201_CREATED)
     return Response({
         "errors": [{"field": key, "message": value[0]} for key, value in serializer.errors.items()]
     }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
 
 @api_view(['POST'])
 def login(request):
