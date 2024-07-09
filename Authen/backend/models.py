@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import uuid
 
 class UserManager(BaseUserManager):
@@ -23,7 +23,7 @@ class UserManager(BaseUserManager):
 
         return self.create_user(email, firstName, lastName, password, **extra_fields)
 
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, PermissionsMixin):
     userId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     firstName = models.CharField(max_length=30, null=False)
     lastName = models.CharField(max_length=30, null=False)
@@ -31,7 +31,7 @@ class User(AbstractBaseUser):
     password = models.CharField(max_length=100, null=False)
     phone = models.CharField(max_length=15, blank=True, null=True)
     is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     objects = UserManager()
 
@@ -41,6 +41,11 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.email
 
+    def has_perm(self, perm, obj=None):
+        return self.is_superuser
+
+    def has_module_perms(self, app_label):
+        return self.is_superuser
 
 class Organisation(models.Model):
     orgId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
