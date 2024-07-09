@@ -3,19 +3,25 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 import uuid
 
 class UserManager(BaseUserManager):
-    def create_user(self, userId, email, firstName, lastName, password=None, **extra_fields):
+    def create_user(self, email, firstName, lastName, password=None, **extra_fields):
         if not email:
             raise ValueError('The Email field must be set')
         email = self.normalize_email(email)
-        user = self.model(userId=userId, email=email, firstName=firstName, lastName=lastName, **extra_fields)
+        user = self.model(email=email, firstName=firstName, lastName=lastName, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, userId, email, firstName, lastName, password=None, **extra_fields):
+    def create_superuser(self, email, firstName, lastName, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        return self.create_user(userId, email, firstName, lastName, password, **extra_fields)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(email, firstName, lastName, password, **extra_fields)
 
 class User(AbstractBaseUser):
     userId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -24,14 +30,17 @@ class User(AbstractBaseUser):
     email = models.EmailField(unique=True, null=False)
     password = models.CharField(max_length=100, null=False)
     phone = models.CharField(max_length=15, blank=True, null=True)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
 
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['userId', 'firstName', 'lastName']
+    REQUIRED_FIELDS = ['firstName', 'lastName']
 
     def __str__(self):
         return self.email
+
 
 class Organisation(models.Model):
     orgId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
