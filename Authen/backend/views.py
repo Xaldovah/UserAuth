@@ -6,30 +6,42 @@ from .models import User, Organisation
 from .serializers import UserSerializer, OrganisationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+from rest_framework.exceptions import ValidationError
 
 @api_view(['POST'])
 def register(request):
     serializer = UserSerializer(data=request.data)
-    if serializer.is_valid():
-        user = serializer.save()
-        token = RefreshToken.for_user(user)
+    try:
+        serializer.is_valid(raise_exception=True)
+    except ValidationError as e:
         return Response({
-            "status": "success",
-            "message": "Registration successful",
-            "data": {
-                "accessToken": str(token.access_token),
-                "user": {
-                    "userId": str(user.userId),
-                    "firstName": user.firstName,
-                    "lastName": user.lastName,
-                    "email": user.email,
-                    "phone": user.phone
-                }
-            }
-        }, status=status.HTTP_201_CREATED)
+            "errors": [{"field": k, "message": str(v[0])} for k, v in e.detail.items()]
+        }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+    user = serializer.save()
+    user.set_password(request.data['password'])
+    user.save()
+
+    org_name = f"{user.firstName}'s Organisation"
+    org = Organisation.objects.create(name=org_name)
+    org.users.add(user)
+    org.save()
+
+    token = RefreshToken.for_user(user)
     return Response({
-        "errors": [{"field": key, "message": value[0]} for key, value in serializer.errors.items()]
-    }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        "status": "success",
+        "message": "Registration successful",
+        "data": {
+            "accessToken": str(token.access_token),
+            "user": {
+                "userId": str(user.userId),
+                "firstName": user.firstName,
+                "lastName": user.lastName,
+                "email": user.email,
+                "phone": user.phone
+            }
+        }
+    }, status=status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])

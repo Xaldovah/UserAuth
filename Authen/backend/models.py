@@ -51,7 +51,13 @@ class Organisation(models.Model):
     orgId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=100, null=False)
     description = models.TextField(blank=True, null=True)
-    users = models.ManyToManyField(User, related_name='organisations')
+    users = models.ManyToManyField(User, through='OrganisationUser', related_name='organisations')
 
     def __str__(self):
         return self.name
+
+
+class OrganisationUser(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
